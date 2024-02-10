@@ -1,0 +1,23 @@
+name: C/C++ CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: pre-req apt
+      run: apt install sudo rsync net-tools traceroute snmpd snmp iptables sudo gnupg2 curl libmbedcrypto3 libmbedtls12 libmbedx509-0 libnl-3-200 libnl-route-3-200 libnuma1 python3-cffi python3-cffi-backend python3-ply python3-pycparser libsubunit0 libmnl-dev -y
+    - name: clone
+      run: mkdir src; cd src; pwd; git clone https://github.com/pimvanpelt/lcpng.git;  git clone https://gerrit.fd.io/r/vpp; ln -s ${PWD}/lcpng ${PWD}/vpp/src/plugins/lcpng
+    - name: INSTALL deps
+      run: make install-deps; make install-deps
+    - name: make release
+      run: make build-release
